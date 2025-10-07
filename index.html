@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Funcionários</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--primary-color);
+        }
+        
+        .main-content {
+            padding: 2rem 0;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .card h3 {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+        
+        .card p {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .section-title {
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        .employee-list {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status-active {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .status-inactive {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .status-break {
+            background-color: var(--warning-color);
+            color: white;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark-color);
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        footer {
+            background-color: var(--secondary-color);
+            color: white;
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 0 0.75rem;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">Controle de Funcionários</div>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="active">Dashboard</a></li>
+                        <li><a href="#">Funcionários</a></li>
+                        <li><a href="#">Relatórios</a></li>
+                        <li><a href="#">Configurações</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    
+    <main class="main-content">
+        <div class="container">
+            <h2 class="section-title">Dashboard</h2>
+            
+            <div class="dashboard">
+                <div class="card">
+                    <h3>Funcionários Ativos</h3>
+                    <p id="active-employees">0</p>
+                </div>
+                <div class="card">
+                    <h3>Trabalhando Agora</h3>
+                    <p id="working-now">0</p>
+                </div>
+                <div class="card">
+                    <h3>Em Pausa</h3>
+                    <p id="on-break">0</p>
+                </div>
+                <div class="card">
+                    <h3>Horas Trabalhadas Hoje</h3>
+                    <p id="hours-today">0h</p>
+                </div>
+            </div>
+            
+            <div class="employee-controls">
+                <button id="add-employee-btn" class="btn">Adicionar Funcionário</button>
+                <button id="start-work-btn" class="btn btn-success">Iniciar Trabalho</button>
+                <button id="start-break-btn" class="btn btn-warning">Iniciar Pausa</button>
+                <button id="end-work-btn" class="btn btn-danger">Finalizar Trabalho</button>
+            </div>
+            
+            <h2 class="section-title">Funcionários</h2>
+            
+            <div class="employee-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Cargo</th>
+                            <th>Status</th>
+                            <th>Horário de Entrada</th>
+                            <th>Atividade Atual</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employee-table-body">
+                        <!-- Dados serão preenchidos via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Modal para adicionar funcionário -->
+    <div id="employee-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Adicionar Funcionário</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="employee-form">
+                <div class="form-group">
+                    <label for="employee-name">Nome</label>
+                    <input type="text" id="employee-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="employee-position">Cargo</label>
+                    <input type="text" id="employee-position" required>
+                </div>
+                <div class="form-group">
+                    <label for="employee-department">Departamento</label>
+                    <select id="employee-department" required>
+                        <option value="">Selecione um departamento</option>
+                        <option value="TI">TI</option>
+                        <option value="Vendas">Vendas</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="RH">RH</option>
+                        <option value="Financeiro">Financeiro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="employee-email">E-mail</label>
+                    <input type="email" id="employee-email" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-danger" id="cancel-employee">Cancelar</button>
+                    <button type="submit" class="btn">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal para registrar atividade -->
+    <div id="activity-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="activity-modal-title">Registrar Atividade</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="activity-form">
+                <div class="form-group">
+                    <label for="activity-description">Descrição da Atividade</label>
+                    <textarea id="activity-description" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-danger" id="cancel-activity">Cancelar</button>
+                    <button type="submit" class="btn">Registrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Sistema de Controle de Funcionários</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Dados de exemplo
+        let employees = [
+            {
+                id: 1,
+                name: "João Silva",
+                position: "Desenvolvedor",
+                department: "TI",
+                email: "joao@empresa.com",
+                status: "active",
+                startTime: "08:00",
+                currentActivity: "Desenvolvimento do sistema de controle"
+            },
+            {
+                id: 2,
+                name: "Maria Santos",
+                position: "Analista de Vendas",
+                department: "Vendas",
+                email: "maria@empresa.com",
+                status: "break",
+                startTime: "09:00",
+                currentActivity: "Reunião com cliente"
+            },
+            {
+                id: 3,
+                name: "Pedro Oliveira",
+                position: "Designer",
+                department: "Marketing",
+                email: "pedro@empresa.com",
+                status: "inactive",
+                startTime: "",
+                currentActivity: ""
+            }
+        ];
+        
+        // Elementos do DOM
+        const employeeTableBody = document.getElementById('employee-table-body');
+        const activeEmployeesElement = document.getElementById('active-employees');
+        const workingNowElement = document.getElementById('working-now');
+        const onBreakElement = document.getElementById('on-break');
+        const hoursTodayElement = document.getElementById('hours-today');
+        const addEmployeeBtn = document.getElementById('add-employee-btn');
+        const startWorkBtn = document.getElementById('start-work-btn');
+        const startBreakBtn = document.getElementById('start-break-btn');
+        const endWorkBtn = document.getElementById('end-work-btn');
+        const employeeModal = document.getElementById('employee-modal');
+        const activityModal = document.getElementById('activity-modal');
+        const employeeForm = document.getElementById('employee-form');
+        const activityForm = document.getElementById('activity-form');
+        const closeModalButtons = document.querySelectorAll('.close-modal');
+        const cancelEmployeeBtn = document.getElementById('cancel-employee');
+        const cancelActivityBtn = document.getElementById('cancel-activity');
+        const activityModalTitle = document.getElementById('activity-modal-title');
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            renderEmployeeTable();
+            updateDashboard();
+        });
+        
+        // Renderizar tabela de funcionários
+        function renderEmployeeTable() {
+            employeeTableBody.innerHTML = '';
+            
+            employees.forEach(employee => {
+                const row = document.createElement('tr');
+                
+                let statusClass = '';
+                let statusText = '';
+                
+                switch(employee.status) {
+                    case 'active':
+                        statusClass = 'status-active';
+                        statusText = 'Trabalhando';
+                        break;
+                    case 'break':
+                        statusClass = 'status-break';
+                        statusText = 'Em Pausa';
+                        break;
+                    case 'inactive':
+                        statusClass = 'status-inactive';
+                        statusText = 'Fora do Trabalho';
+                        break;
+                }
+                
+                row.innerHTML = `
+                    <td>${employee.name}</td>
+                    <td>${employee.position}</td>
+                    <td><span class="status ${statusClass}">${statusText}</span></td>
+                    <td>${employee.startTime || '-'}</td>
+                    <td>${employee.currentActivity || '-'}</td>
+                    <td>
+                        <button class="btn" onclick="editEmployee(${employee.id})">Editar</button>
+                        <button class="btn btn-danger" onclick="deleteEmployee(${employee.id})">Excluir</button>
+                    </td>
+                `;
+                
+                employeeTableBody.appendChild(row);
+            });
+        }
+        
+        // Atualizar dashboard
+        function updateDashboard() {
+            const activeCount = employees.filter(emp => emp.status === 'active' || emp.status === 'break').length;
+            const workingCount = employees.filter(emp => emp.status === 'active').length;
+            const breakCount = employees.filter(emp => emp.status === 'break').length;
+            
+            // Calcular horas trabalhadas (simulação)
+            const totalHours = employees.reduce((total, emp) => {
+                if (emp.startTime) {
+                    const start = new Date(`2000-01-01T${emp.startTime}`);
+                    const now = new Date();
+                    const diffMs = now - start;
+                    const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+                    return total + (diffHrs > 0 ? diffHrs : 0);
+                }
+                return total;
+            }, 0);
+            
+            activeEmployeesElement.textContent = activeCount;
+            workingNowElement.textContent = workingCount;
+            onBreakElement.textContent = breakCount;
+            hoursTodayElement.textContent = `${totalHours}h`;
+        }
+        
+        // Adicionar funcionário
+        addEmployeeBtn.addEventListener('click', function() {
+            employeeModal.style.display = 'flex';
+        });
+        
+        // Fechar modal
+        closeModalButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                employeeModal.style.display = 'none';
+                activityModal.style.display = 'none';
+            });
+        });
+        
+        cancelEmployeeBtn.addEventListener('click', function() {
+            employeeModal.style.display = 'none';
+        });
+        
+        cancelActivityBtn.addEventListener('click', function() {
+            activityModal.style.display = 'none';
+        });
+        
+        // Enviar formulário de funcionário
+        employeeForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('employee-name').value;
+            const position = document.getElementById('employee-position').value;
+            const department = document.getElementById('employee-department').value;
+            const email = document.getElementById('employee-email').value;
+            
+            const newEmployee = {
+                id: employees.length > 0 ? Math.max(...employees.map(emp => emp.id)) + 1 : 1,
+                name,
+                position,
+                department,
+                email,
+                status: 'inactive',
+                startTime: '',
+                currentActivity: ''
+            };
+            
+            employees.push(newEmployee);
+            renderEmployeeTable();
+            updateDashboard();
+            employeeModal.style.display = 'none';
+            employeeForm.reset();
+        });
+        
+        // Iniciar trabalho
+        startWorkBtn.addEventListener('click', function() {
+            activityModalTitle.textContent = 'Iniciar Trabalho';
+            activityModal.style.display = 'flex';
+            
+            activityForm.onsubmit = function(e) {
+                e.preventDefault();
+                
+                const activity = document.getElementById('activity-description').value;
+                const now = new Date();
+                const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                
+                // Simulação: apenas o primeiro funcionário inicia o trabalho
+                if (employees.length > 0) {
+                    employees[0].status = 'active';
+                    employees[0].startTime = timeString;
+                    employees[0].currentActivity = activity;
+                }
+                
+                renderEmployeeTable();
+                updateDashboard();
+                activityModal.style.display = 'none';
+                activityForm.reset();
+            };
+        });
+        
+        // Iniciar pausa
+        startBreakBtn.addEventListener('click', function() {
+            activityModalTitle.textContent = 'Iniciar Pausa';
+            activityModal.style.display = 'flex';
+            
+            activityForm.onsubmit = function(e) {
+                e.preventDefault();
+                
+                const activity = document.getElementById('activity-description').value;
+                
+                // Simulação: apenas o primeiro funcionário inicia a pausa
+                if (employees.length > 0 && employees[0].status === 'active') {
+                    employees[0].status = 'break';
+                    employees[0].currentActivity = activity;
+                }
+                
+                renderEmployeeTable();
+                updateDashboard();
+                activityModal.style.display = 'none';
+                activityForm.reset();
+            };
+        });
+        
+        // Finalizar trabalho
+        endWorkBtn.addEventListener('click', function() {
+            // Simulação: apenas o primeiro funcionário finaliza o trabalho
+            if (employees.length > 0 && (employees[0].status === 'active' || employees[0].status === 'break')) {
+                employees[0].status = 'inactive';
+                employees[0].currentActivity = '';
+            }
+            
+            renderEmployeeTable();
+            updateDashboard();
+        });
+        
+        // Editar funcionário
+        function editEmployee(id) {
+            const employee = employees.find(emp => emp.id === id);
+            if (employee) {
+                document.getElementById('employee-name').value = employee.name;
+                document.getElementById('employee-position').value = employee.position;
+                document.getElementById('employee-department').value = employee.department;
+                document.getElementById('employee-email').value = employee.email;
+                
+                employeeModal.style.display = 'flex';
+                
+                // Alterar comportamento do formulário para edição
+                employeeForm.onsubmit = function(e) {
+                    e.preventDefault();
+                    
+                    employee.name = document.getElementById('employee-name').value;
+                    employee.position = document.getElementById('employee-position').value;
+                    employee.department = document.getElementById('employee-department').value;
+                    employee.email = document.getElementById('employee-email').value;
+                    
+                    renderEmployeeTable();
+                    updateDashboard();
+                    employeeModal.style.display = 'none';
+                    employeeForm.reset();
+                    
+                    // Restaurar comportamento padrão do formulário
+                    employeeForm.onsubmit = function(e) {
+                        e.preventDefault();
+                        
+                        const name = document.getElementById('employee-name').value;
+                        const position = document.getElementById('employee-position').value;
+                        const department = document.getElementById('employee-department').value;
+                        const email = document.getElementById('employee-email').value;
+                        
+                        const newEmployee = {
+                            id: employees.length > 0 ? Math.max(...employees.map(emp => emp.id)) + 1 : 1,
+                            name,
+                            position,
+                            department,
+                            email,
+                            status: 'inactive',
+                            startTime: '',
+                            currentActivity: ''
+                        };
+                        
+                        employees.push(newEmployee);
+                        renderEmployeeTable();
+                        updateDashboard();
+                        employeeModal.style.display = 'none';
+                        employeeForm.reset();
+                    };
+                };
+            }
+        }
+        
+        // Excluir funcionário
+        function deleteEmployee(id) {
+            if (confirm('Tem certeza que deseja excluir este funcionário?')) {
+                employees = employees.filter(emp => emp.id !== id);
+                renderEmployeeTable();
+                updateDashboard();
+            }
+        }
+        
+        // Atualizar dashboard a cada minuto
+        setInterval(updateDashboard, 60000);
+    </script>
+</body>
+</html>
