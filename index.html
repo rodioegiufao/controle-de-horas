@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Controle de Funcionários</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div class="login-container" id="login-screen">
+        <div class="login-box">
+            <div class="login-header">
+                <h1>Controle de Funcionários</h1>
+                <p>Faça login para acessar o sistema</p>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" placeholder="seu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" placeholder="Sua senha" required>
+                </div>
+                <button type="submit" class="btn">Entrar</button>
+            </form>
+            <div class="login-footer">
+                <p>Use: admin@empresa.com / senha: 123456</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Aplicação Principal (inicialmente oculta) -->
+    <div class="main-app" id="main-app">
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">Controle de Funcionários</div>
+                    <div class="user-info">
+                        <div class="user-avatar" id="user-avatar">U</div>
+                        <div>
+                            <div id="user-name">Usuário</div>
+                            <button class="logout-btn" id="logout-btn">Sair</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="container">
+                <h2 class="section-title">Dashboard</h2>
+                
+                <div class="dashboard">
+                    <div class="card">
+                        <h3>Funcionários Ativos</h3>
+                        <p id="active-employees">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Trabalhando Agora</h3>
+                        <p id="working-now">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Em Pausa</h3>
+                        <p id="on-break">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Horas Trabalhadas Hoje</h3>
+                        <p id="hours-today">0h</p>
+                    </div>
+                </div>
+                
+                <div class="employee-controls">
+                    <button id="add-employee-btn" class="btn">Adicionar Funcionário</button>
+                    <button id="start-work-btn" class="btn btn-success">Iniciar Trabalho</button>
+                    <button id="start-break-btn" class="btn btn-warning">Iniciar Pausa</button>
+                    <button id="end-work-btn" class="btn btn-danger">Finalizar Trabalho</button>
+                </div>
+                
+                <h2 class="section-title">Funcionários</h2>
+                
+                <div class="employee-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Cargo</th>
+                                <th>Status</th>
+                                <th>Horário de Entrada</th>
+                                <th>Atividade Atual</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employee-table-body">
+                            <!-- Dados serão preenchidos via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Modal para adicionar funcionário -->
+        <div id="employee-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Adicionar Funcionário</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <form id="employee-form">
+                    <div class="form-group">
+                        <label for="employee-name">Nome</label>
+                        <input type="text" id="employee-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="employee-position">Cargo</label>
+                        <input type="text" id="employee-position" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="employee-department">Departamento</label>
+                        <select id="employee-department" required>
+                            <option value="">Selecione um departamento</option>
+                            <option value="TI">TI</option>
+                            <option value="Vendas">Vendas</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="RH">RH</option>
+                            <option value="Financeiro">Financeiro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="employee-email">E-mail</label>
+                        <input type="email" id="employee-email" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-danger" id="cancel-employee">Cancelar</button>
+                        <button type="submit" class="btn">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Modal para registrar atividade -->
+        <div id="activity-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="activity-modal-title">Registrar Atividade</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <form id="activity-form">
+                    <div class="form-group">
+                        <label for="activity-description">Descrição da Atividade</label>
+                        <textarea id="activity-description" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-danger" id="cancel-activity">Cancelar</button>
+                        <button type="submit" class="btn">Registrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="container">
+                <p>&copy; 2023 Sistema de Controle de Funcionários</p>
+            </div>
+        </footer>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
